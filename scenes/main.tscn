@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://rbw4l0ij5cd1"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_8m42y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ycov4"]
+albedo_color = Color(0, 0, 0.913725, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2ahq7"]
+material = SubResource("StandardMaterial3D_ycov4")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_5v3ox"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
+[node name="main" type="Node"]
+script = ExtResource("1_8m42y")
+
+[node name="Players" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://scenes/player.tscn")
+spawn_path = NodePath("../Players")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("PlaneMesh_2ahq7")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_5v3ox")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 6.6, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.762894, 0.315777, -0.564161, 0, 0.872607, 0.488423, 0.646524, -0.372615, 0.665707, 0, 1.61004, 0)
