@@ -9,9 +9,6 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 @export var sync: MultiplayerSynchronizer
 @onready var name_label := $NameLabel
 
-func _enter_tree():
-  set_multiplayer_authority(str(name).to_int())
-
 func _ready():
   name_label.text = get_label_name()
   sync.set_visibility_for(1, true)
@@ -20,14 +17,14 @@ func _ready():
 func get_label_name() -> String:
   # the server can determine which players are clients
   if multiplayer.get_unique_id() == 1:
-    if is_multiplayer_authority(): return "[server] %s (%s)" % [name, get_visibility()]
-    return "[client] %s" % name
+    if is_multiplayer_authority(): return "[server] %s (%s)" % [get_parent().name, get_visibility()]
+    return "[client] %s" % get_parent().name
 
   # clients can see their own visibility
-  if is_multiplayer_authority(): return "[me] %s (%s)" % [name, get_visibility()]
+  if is_multiplayer_authority(): return "[me] %s (%s)" % [get_parent().name, get_visibility()]
 
   # peers just see a name
-  return name
+  return get_parent().name
 
 func get_visibility() -> String:
   if sync.public_visibility: return "public"
