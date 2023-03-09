@@ -1,20 +1,21 @@
-[gd_scene load_steps=5 format=3 uid="uid://tpoyhajg8fxn"]
+[gd_scene load_steps=6 format=3 uid="uid://tpoyhajg8fxn"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_60w0u"]
+[ext_resource type="Script" path="res://scripts/player_state.gd" id="2_ng8wy"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_5ce1k"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_chbms"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_5sg7p"]
-properties/0/path = NodePath(".:position")
+properties/0/path = NodePath("State:position")
 properties/0/spawn = true
 properties/0/sync = true
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("sync")]
 collision_layer = 2
 script = ExtResource("1_60w0u")
-sync = NodePath("PlayerSynchronizer")
+sync = NodePath("State/PlayerSynchronizer")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
@@ -29,7 +30,11 @@ text = "Name"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("BoxShape3D_chbms")
 
-[node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="State" type="Node" parent="."]
+script = ExtResource("2_ng8wy")
+
+[node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="State"]
+root_path = NodePath("../..")
 replication_config = SubResource("SceneReplicationConfig_5sg7p")
 visibility_update_mode = 2
 public_visibility = false

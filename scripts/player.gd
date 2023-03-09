@@ -8,6 +8,7 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @export var sync: MultiplayerSynchronizer
 @onready var name_label := $NameLabel
+@onready var state: PlayerState = $State
 
 func _enter_tree():
   set_multiplayer_authority(str(name).to_int())
@@ -34,7 +35,9 @@ func get_visibility() -> String:
   return "private"
 
 func _physics_process(delta):
-  if not is_multiplayer_authority(): return
+  if not is_multiplayer_authority():
+    position = state.position
+    return
 
   if not is_on_floor():
     velocity.y -= gravity * delta
@@ -57,3 +60,4 @@ func _physics_process(delta):
     velocity.z = move_toward(velocity.z, 0, SPEED)
 
   move_and_slide()
+  state.position = position
