@@ -4,7 +4,17 @@ var peer = ENetMultiplayerPeer.new()
 const PORT = 3003
 
 @onready var players = %Players
+@export var spawner: MultiplayerSpawner
 const PlayerScene = preload("res://scenes/player.tscn")
+
+func _enter_tree():
+  spawner.spawn_function = _spawn_player
+
+func _spawn_player(id: int) -> PlayerRoot:
+  var player := PlayerScene.instantiate()
+  player.name = str(id)
+  player.player_id = id
+  return player
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -13,7 +23,6 @@ func _ready() -> void:
     multiplayer.peer_disconnected.connect(remove_player)
 
     if DisplayServer.get_name() != "headless":
-      await get_tree().create_timer(.2).timeout
       add_player(1)
 
   else:
@@ -22,9 +31,7 @@ func _ready() -> void:
   multiplayer.multiplayer_peer = peer
 
 func add_player(id: int) -> void:
-  var player := PlayerScene.instantiate()
-  player.name = str(id)
-  players.add_child(player)
+  spawner.spawn(id)
 
 func remove_player(id: int) -> void:
   var player := players.get_node(str(id))

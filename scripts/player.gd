@@ -7,10 +7,12 @@ const JUMP_VELOCITY = 4.5
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 @export var sync: MultiplayerSynchronizer
+@export var host_sync: MultiplayerSynchronizer
 @onready var name_label := $NameLabel
 
 func _ready():
   name_label.text = get_label_name()
+  host_sync.set_visibility_for(1, true)
   sync.set_visibility_for(1, true)
 
 
@@ -30,17 +32,21 @@ func get_visibility() -> String:
   if sync.public_visibility: return "public"
   return "private"
 
+@rpc("call_local")
+func jump(v: bool):
+  host_sync.set_visibility_for(0, v)
+  sync.set_visibility_for(0, v)
+  name_label.text = get_label_name()
+
 func _physics_process(delta):
   if not is_multiplayer_authority(): return
+  if get_parent().name != str(multiplayer.get_unique_id()): return
 
   if not is_on_floor():
     velocity.y -= gravity * delta
 
   if Input.is_action_just_pressed("jump") and is_on_floor():
-    # sync.set_visibility_for(0, not sync.public_visibility)
-    sync.public_visibility = not sync.public_visibility
-    sync.update_visibility(0)
-    name_label.text = get_label_name()
+    jump.rpc(not sync.public_visibility)
 
     velocity.y = JUMP_VELOCITY
 

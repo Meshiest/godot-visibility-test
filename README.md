@@ -13,3 +13,4 @@
 - other players see all players but the host (public visibility is off)
 - when a (non-host) player jumps, their public visibility is toggled
 - when a player's public visibility is on, other players see their movement
+- host jumping doesn't transfer visibility (just something weird about this demo, the dual-synchronizer works)
